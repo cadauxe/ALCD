@@ -43,10 +43,6 @@ jobs:
         source /opt/otb/otbenv.profile
         sh /opt/otb/recompile_bindings.sh
         python -m pip install --upgrade pip
-        pip install pytest pytest-cov
-        pip install rasterio
-        pip install pandas
-        pip install -U scikit-learn
         if [ -f docker/requirements.txt ]; then pip install -r docker/requirements.txt; fi
     - name: pytest
       run: |
