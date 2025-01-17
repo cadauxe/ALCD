@@ -43,7 +43,7 @@ jobs:
         source /opt/otb/otbenv.profile
         sh /opt/otb/recompile_bindings.sh
         python -m pip install --upgrade pip
-        pip install pytest pytest-cov
+        pip install pytest pytest-cov flake8
         pip install rasterio
         pip install pandas
         pip install -U scikit-learn
