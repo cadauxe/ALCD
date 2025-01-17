@@ -230,6 +230,9 @@ def test_user_prim_alcd(alcd_paths: ALCDTestsData) -> None:
     AssertionError
         If the ALCD process fails (i.e., returns a non-zero exit code).
     """
+    if op.exists(alcd_paths.s2_data / "Toulouse_31TCJ_20240305") :
+        shutil.rmtree(alcd_paths.s2_data / "Toulouse_31TCJ_20240305")
+
     output_dir = alcd_paths.data_dir / "test_user_prim_alcd" / "Toulouse_31TCJ_20240305"
     global_param_file, paths_param_file = prepare_test_dir(alcd_paths, output_dir, "rf_scikit","global_parameters_user_prim.json")
 
@@ -239,7 +242,6 @@ def test_user_prim_alcd(alcd_paths: ALCDTestsData) -> None:
     assert proc1.returncode == 0, out.decode('utf-8')
 
     shutil.copytree(alcd_paths.s2_data / "Toulouse_31TCJ_20240305" / "In_data" / "Image", output_dir / "In_data" / "Image", dirs_exist_ok=True)
-
     cmd2 = f"python {alcd_paths.project_dir}/all_run_alcd.py -f True -s 1 -l Toulouse -d 20240305 -c 20240120 -dates False -kfold False -force False -global_parameters {global_param_file} -paths_parameters {paths_param_file} -model_parameters {alcd_paths.cfg}/model_parameters.json"
     proc2 = subprocess.Popen(cmd2, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, _ = proc2.communicate()
