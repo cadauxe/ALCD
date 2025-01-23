@@ -81,8 +81,11 @@ def check_expected_features_alcd(
 
 def check_expected_features_content_alcd(
         feat_dir: Path
-) -> tuple[bool, dict]:
-    """Check expected alcd features content generation files."""
+) -> None:
+    """Check expected alcd features content generation files.
+
+    TO DO
+    ADD DOC"""
 
     # Extract the number of bands in the user's data
     band_path = op.join(feat_dir, "In_data", "Image", "Toulouse_bands_bands.txt")
@@ -108,7 +111,6 @@ def check_expected_features_content_alcd(
     bands_sqlite = list(train_data.columns)[4:]
     assert len(bands_sqlite) == exp_nband
 
-    return
 
 
 def prepare_test_dir(alcd_paths: ALCDTestsData, output_dir : str, method : str, global_param_file : str = "global_parameters.json") -> tuple[Path, Path]:
@@ -142,6 +144,8 @@ def prepare_test_dir(alcd_paths: ALCDTestsData, output_dir : str, method : str, 
     global_parameters["color_tables"]["otb"] = str(alcd_paths.cfg / "otb_table.txt")
     global_parameters["user_choices"]["main_dir"] = str(output_dir)
     global_parameters["classification"]["method"] = str(method)
+
+    # global_parameters["user_choices"]["user_module"] = str(alcd_paths.data_dir)+ global_parameters["user_choices"]["user_module"]
 
     out_global_parameters = output_dir / global_param_file
 
@@ -212,7 +216,7 @@ def test_scikit_alcd(alcd_paths: ALCDTestsData) -> None:
     alcd_results, details = check_expected_alcd_results(
         alcd_paths.data_dir / "test_scikit_alcd" / "Toulouse_31TCJ_20240305" / "Out")
     assert alcd_results, f"some output files are missing: {', '.join(file_name for file_name, exists in details.items() if not exists)}"
-
+    ###OUVRIR LE MODEL ET TESTER si c'est bien un truc SCIKIT
 
 def test_user_prim_alcd(alcd_paths: ALCDTestsData) -> None:
     """
