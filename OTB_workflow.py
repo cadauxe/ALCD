@@ -44,6 +44,8 @@ import contour_from_labeled
 import confidence_map_exploitation
 import sklearn.ensemble as sk
 
+from alcd_params.params_reader import read_global_parameters
+
 
 # -------- 0. DIRECTORIES CREATION---------------------
 
@@ -448,6 +450,7 @@ def confidence_map_viz(global_parameters, additional_name=''):
 
 # -------- 3. POST-PROCESSING ---------------------
 
+
 def fancy_classif_viz(global_parameters, proceed=True):
     '''
     7. Fancy visualisation
@@ -563,7 +566,7 @@ def create_contour_from_labeled(global_parameters, proceed=True):
 
 
 def main():
-    global_parameters = json.load(open(op.join('parameters_files', 'global_parameters.json')))
+    global_parameters = read_global_parameters(op.join('parameters_files', 'global_parameters.json'))
     train_model(global_parameters, shell=False, proceed=True)
 
     return
