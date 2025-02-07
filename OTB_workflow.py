@@ -268,6 +268,8 @@ def otb_train(training_samples_extracted : str, method : str, model_parameters :
         TrainVectorClassifier.UpdateParameters()  # Update here, otherwise features wont be recognized
         TrainVectorClassifier.SetParameterStringList("feat", features_API)
         TrainVectorClassifier.SetParameterString("classifier", otb_method[method])
+        TrainVectorClassifier.SetParameterString("rand", str(model_parameters[method]["rand"]))
+        del model_parameters[method]["rand"]
 
         for key, value in model_parameters[method].items():
             TrainVectorClassifier.SetParameterString(
