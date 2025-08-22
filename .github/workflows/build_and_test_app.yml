@@ -67,7 +67,7 @@ jobs:
         export OTB_INSTALL_DIR=/opt/otb
         export LC_NUMERIC=C
 
-        PYTHONPATH=. pytest --cov=. --cov-report=xml:.ci-reports-alcd/coverage_alcd.xml --cov-report html:cov_html_alcd --cov-report=term --junitxml=pytest-results-alcd.xml
+        pytest --cov=. --cov-report=xml:.ci-reports-alcd/coverage_alcd.xml --cov-report html:cov_html_alcd --cov-report=term --junitxml=pytest-results-alcd.xml
     - name: Upload Coverage Report
       uses: actions/upload-artifact@v4
       with:
