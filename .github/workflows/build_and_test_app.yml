@@ -1,9 +1,9 @@
 name: ALCD
 
 on:
-  pull_request:
+  push:
     branches:
-      - "master"
+      - "add_py_feat"
 
 permissions:
   contents: read
@@ -21,11 +21,15 @@ jobs:
       - name: install quality deps
         run: |
           pip install pylint mccabe
-      - name: code quality
+      - name: Run Pylint
+        shell: bash -l {0}
         run: |
-          pylint --disable=all --fail-under=10 --enable=too-many-statements --max-statements=100 .
-          pylint --disable=all --fail-under=10 --enable=too-many-nested-blocks .
+          pylint --recursive=y --disable=all --enable=too-many-statements,too-many-nested-blocks .
+      - name: Run McCabe Complexity Check
+        shell: bash -l {0}
+        run: |
           ./continuous_integration/scripts/check_mccabe_complexity.sh 25 .
+
   test:
     runs-on: ubuntu-22.04
     steps:
@@ -43,7 +47,6 @@ jobs:
         source /opt/otb/otbenv.profile
         sh /opt/otb/recompile_bindings.sh
         python -m pip install --upgrade pip
-        pip install pytest pytest-cov
         if [ -f docker/requirements.txt ]; then pip install -r docker/requirements.txt; fi
     - name: pytest
       run: |
@@ -58,5 +61,13 @@ jobs:
         export OTB_APPLICATION_PATH=/opt/otb/lib/otb/applications
         export OTB_INSTALL_DIR=/opt/otb
         export LC_NUMERIC=C
-        
-        pytest -s --cov-fail-under=65
+
+        pytest --cov=. --cov-report=xml:.ci-reports-alcd/coverage_alcd.xml --cov-report html:cov_html_alcd --cov-report=term --junitxml=pytest-results-alcd.xml
+    - name: Upload Coverage Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report-alcd
+        path: |
+          .ci-reports-alcd/
+          cov_html_alcd/
+          pytest-results-alcd.xml

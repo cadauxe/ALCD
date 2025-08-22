@@ -24,12 +24,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this program.  If not, see
 https://www.gnu.org/licenses/gpl-3.0.fr.html
 """
-import json
 import os
 import os.path as op
 import argparse
 
 import find_directory_names
+from alcd_params.params_reader import read_paths_parameters
 
 
 def create_jpg(in_jp2s, out_jpg):
@@ -79,13 +79,12 @@ def create_all_quicklook(location, out_dir, paths_parameters):
         in_jp2s = [R, G, B]
 
         out_jpg = op.join(out_dir, (location+'_'+date+'.jpg'))
-        print(out_jpg)
         create_jpg(in_jp2s, out_jpg)
 
         k += 1
 
 
-def main():
+def getarguments():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-l', action='store', default=None, dest='locations',
@@ -94,21 +93,30 @@ def main():
                         help='str, path to json file which contain useful path for ALCD', required=True)
 
     results = parser.parse_args()
-    locations_to_parse = results.locations
-    with open(results.paths_parameters_file, "r", encoding="utf-8") as paths_parameters_file:
-        paths_parameters = json.load(paths_parameters_file)
+    return vars(results)
+
+def quicklook_generator(locations=None, paths_parameters_file=None):
+    locations_to_parse = locations
+    paths_parameters = read_paths_parameters(paths_parameters_file)
     if locations_to_parse != None:
-        locations = locations_to_parse.split(',')
+        loc = locations_to_parse.split(',')
 
     else:
-        locations = ['Mongu', 'Gobabeb', 'RailroadValley', 'Arles', 'Marrakech']
-        locations = ['Alta_Floresta_Brazil']
+        loc = ['Mongu', 'Gobabeb', 'RailroadValley', 'Arles', 'Marrakech']
+        loc = ['Alta_Floresta_Brazil']
 
-    for location in locations:
+    for location in loc:
         out_dir = op.join('tmp', location)
         create_all_quicklook(location, out_dir, paths_parameters)
 
     return
+
+def main():
+    """
+    It parses the command line arguments and calls the all_run_alcd function.
+    """
+    args = getarguments()
+    quicklook_generator(**args)
 
 
 if __name__ == '__main__':
