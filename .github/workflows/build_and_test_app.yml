@@ -24,17 +24,12 @@ jobs:
       - name: Run Pylint
         shell: bash -l {0}
         run: |
-          pylint --recursive=y --disable=all --fail-under=10 --enable=too-many-statements,too-many-nested-blocks .
+          pylint --recursive=y --disable=all --enable=too-many-statements,too-many-nested-blocks .
       - name: Run McCabe Complexity Check
         shell: bash -l {0}
         run: |
           ./continuous_integration/scripts/check_mccabe_complexity.sh 25 .
 
-      - name: code quality
-        run: |
-          pylint --disable=all --fail-under=10 --enable=too-many-statements --max-statements=100 .
-          pylint --disable=all --fail-under=10 --enable=too-many-nested-blocks .
-          ./continuous_integration/scripts/check_mccabe_complexity.sh 25 .
   test:
     runs-on: ubuntu-22.04
     steps:
