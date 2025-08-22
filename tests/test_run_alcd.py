@@ -33,8 +33,8 @@ from pathlib import Path
 
 from conftest import ALCDTestsData
 from sklearn.base import BaseEstimator
-from ..all_run_alcd import all_run_alcd
-from ..quicklook_generator import quicklook_generator
+from all_run_alcd import all_run_alcd
+from quicklook_generator import quicklook_generator
 
 
 def check_expected_quicklook_results(
