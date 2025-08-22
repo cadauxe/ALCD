@@ -167,11 +167,6 @@ def run_all(part, global_parameters, paths_parameters, model_parameters, first_i
                 # Fill automatically the no_data layer from the L1C missing
                 # pixels
                 layers_creation.create_no_data_shp(global_parameters,paths_parameters, force=force)
-
-    if part == 1:
-        # Copy them to local machine
-        invitation_to_copy(global_parameters, first_iteration)
-
     # ----------------------------------------------
     # WAIT FOR USER MODIFICATION OF THE LAYERS IN LOCAL
     # ----------------------------------------------
@@ -191,7 +186,7 @@ def run_all(part, global_parameters, paths_parameters, model_parameters, first_i
 
         proceed = True
         OTB_wf.compute_samples_stats(global_parameters, proceed=True)
-        OTB_wf.select_samples(global_parameters, strategy="constant_8000", proceed=proceed)
+        OTB_wf.select_samples(global_parameters, strategy="constant_8000")
         OTB_wf.extract_samples(global_parameters, proceed=proceed)
 
     elif part == 4:
@@ -240,7 +235,7 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
-def main():
+def getarguments():
     # parsing from the shell
     parser = argparse.ArgumentParser()
 
@@ -267,35 +262,40 @@ def main():
     parser.add_argument('-model_parameters', dest='model_parameters_file',
                         help='str, path to json file which contain classifier parameters', required=True)
     results = parser.parse_args()
-    location = results.location
-    global_parameters = read_global_parameters(results.global_parameters_file)
-    paths_parameters = read_paths_parameters(results.paths_parameters_file)
-    model_parameters = read_models_parameters(results.model_parameters_file)
+    return vars(results)
 
-    global_parameters["json_file"] = results.global_parameters_file
-    get_dates = str2bool(results.get_dates)
+
+def all_run_alcd(global_parameters_file, paths_parameters_file, model_parameters_file, location=None,
+                 wanted_date=None, clear_date=None, first_iteration=None, user_input=None, get_dates='false',
+                 force='false', kfold='false'):
+    global_parameters = read_global_parameters(global_parameters_file)
+    paths_parameters = read_paths_parameters(paths_parameters_file)
+    model_parameters = read_models_parameters(model_parameters_file)
+
+    global_parameters["json_file"] = global_parameters_file
+    get_dates = str2bool(get_dates)
     if get_dates:
         available_dates = find_directory_names.get_all_dates(location, paths_parameters)
         print('\nAvailable dates:\n')
         print([str(d) for d in available_dates])
         return
 
-    if results.first_iteration == None:
+    if first_iteration == None:
         print('Please enter a boolean for the first iteration')
         return
     else:
-        first_iteration = str2bool(results.first_iteration)
+        first_iteration = str2bool(first_iteration)
 
-    if results.user_input == None:
+    if user_input == None:
         print('Please enter an integer for the step')
         return
     else:
-        user_input = results.user_input
+        user_input = user_input
 
-    wanted_date = results.wanted_date
-    clear_date = results.clear_date
-    force = str2bool(results.force)
-    kfold = str2bool(results.kfold)
+    wanted_date = wanted_date
+    clear_date = clear_date
+    force = str2bool(force)
+    kfold = str2bool(kfold)
 
     if kfold:
         tmp_name = next(tempfile._get_candidate_names())
@@ -348,6 +348,12 @@ def main():
     else:
         print('Please enter a valid step value [0 or 1]')
 
+def main():
+    """
+    It parses the command line arguments and calls the all_run_alcd function.
+    """
+    args = getarguments()
+    all_run_alcd(**args)
 
 if __name__ == '__main__':
     main()
