@@ -361,7 +361,7 @@ def test_quicklook(alcd_paths: ALCDTestsData) -> None:
     global_param_file, paths_param_file = prepare_test_dir(alcd_paths, output_dir, "rf_otb")
 
     quicklook_generator(
-        location="Toulouse",
+        locations="Toulouse",
         paths_parameters_file=paths_param_file
     )
     quicklook_results, details = check_expected_quicklook_results(Path("tmp") / "Toulouse")
